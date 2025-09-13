@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Dashboard - CivicRevolution</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f4f9;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #dc2626;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    header h1 { font-size: 1.5rem; }
+    header button {
+      background: white;
+      color: #dc2626;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    header button:hover { background: #f3f3f3; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #f87171;
+      color: white;
+    }
+    select {
+      padding: 0.4rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Admin Dashboard</h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Issue</th>
+        <th>Description</th>
+        <th>Location</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="reportTable">
+      <!-- Reports will load here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Dummy reports (replace with Supabase later)
+    const reports = [
+      { id: 1, issue: "Pothole", desc: "Big pothole near main road", loc: "Ranchi", status: "Pending" },
+      { id: 2, issue: "Garbage", desc: "Garbage not collected", loc: "Dhanbad", status: "In Progress" },
+      { id: 3, issue: "Streetlight", desc: "Streetlight not working", loc: "Jamshedpur", status: "Solved" }
+    ];
+
+    const reportTable = document.getElementById("reportTable");
+
+    // Render reports
+    reports.forEach((report, index) => {
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${report.id}</td>
+        <td>${report.issue}</td>
+        <td>${report.desc}</td>
+        <td>${report.loc}</td>
+        <td>
+          <select data-index="${index}">
+            <option ${report.status === "Pending" ? "selected" : ""}>Pending</option>
+            <option ${report.status === "In Progress" ? "selected" : ""}>In Progress</option>
+            <option ${report.status === "Solved" ? "selected" : ""}>Solved</option>
+          </select>
+        </td>
+      `;
+      reportTable.appendChild(row);
+    });
+
+    // Update status when dropdown changes
+    document.querySelectorAll("select").forEach(select => {
+      select.addEventListener("change", function() {
+        const index = this.getAttribute("data-index");
+        reports[index].status = this.value;
+        alert(`Report #${reports[index].id} updated to "${this.value}" ✅`);
+      });
+    });
+
+    // Logout button
+    document.getElementById("logoutBtn").onclick = function() {
+      localStorage.removeItem("adminLoggedIn");
+      window.location.href = "admin-login.html";
+    };
+
+    // Redirect if not logged in
+    window.onload = function() {
+      if (localStorage.getItem("adminLoggedIn") !== "true") {
+        window.location.href = "admin-login.html";
+      }
+    };
+  </script>
+
+</body>
+</html>
